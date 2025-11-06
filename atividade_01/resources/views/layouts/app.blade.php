@@ -33,6 +33,25 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav me-auto">
+                        <!-- Left Side Of Navbar -->
+<ul class="navbar-nav me-auto">
+    <li class="nav-item">
+        <a class="nav-link" href="{{ route('categories.index') }}">
+            <i class="bi bi-tags"></i> Categorias
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{ route('author.index') }}">
+            <i class="bi bi-person"></i> Autores
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{ route('publisher.index') }}">
+            <i class="bi bi-building"></i> Editoras
+        </a>
+    </li>
+</ul>
+
 
                     </ul>
 
