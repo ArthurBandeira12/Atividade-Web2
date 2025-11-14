@@ -10,12 +10,12 @@
         </div>
         <div class="card-body">
             <p><strong>Autor:</strong>
-                <a href="{{ route('authors.show', $book->author->id) }}">
+                <a href="{{ route('author.show', $book->author->id) }}">
                     {{ $book->author->name }}
                 </a>
             </p>
             <p><strong>Editora:</strong>
-                <a href="{{ route('publishers.show', $book->publisher->id) }}">
+                <a href="{{ route('publisher.show', $book->publisher->id) }}">
                     {{ $book->publisher->name }}
                 </a>
             </p>

@@ -45,7 +45,7 @@ class BookController extends Controller
     $book->load(['author', 'publisher', 'category']);
     $users = User::all();
 
-    return view('books.show', compact('book'));
+    return view('books.show', compact('book', 'users'));
 
 }
 
@@ -71,6 +71,8 @@ class BookController extends Controller
         'publisher_id' => 'required|exists:publishers,id',
         'author_id' => 'required|exists:authors,id',
         'category_id' => 'required|exists:categories,id',
+        'pages' => 'required|integer|min:1',
+
     ]);
 
     $book->update($request->all());
@@ -101,6 +103,8 @@ class BookController extends Controller
             'publisher_id' => 'required|exists:publishers,id',
             'author_id' => 'required|exists:authors,id',
             'category_id' => 'required|exists:categories,id',
+            'pages' => 'required|integer|min:1',
+
         ]);
 
         Book::create($request->all());
@@ -126,6 +130,8 @@ class BookController extends Controller
             'publisher_id' => 'required|exists:publishers,id',
             'author_id' => 'required|exists:authors,id',
             'category_id' => 'required|exists:categories,id',
+            'pages' => 'required|integer|min:1',
+
         ]);
 
         Book::create($request->all());

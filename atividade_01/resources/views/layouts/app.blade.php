@@ -50,6 +50,17 @@
             <i class="bi bi-building"></i> Editoras
         </a>
     </li>
+     <li class="nav-item">
+        <a class="nav-link" href="{{ route('books.index') }}">
+            <i class="bi bi-book"></i> Livros
+        </a>
+    </li>
+
+      <li class="nav-item">
+        <a class="nav-link" href="{{ route('users.index') }}">
+            <i class="bi bi-person"></i> Usuarios
+        </a>
+    </li>
 </ul>
 
 
