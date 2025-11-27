@@ -4,7 +4,7 @@
 <div class="container">
     <h1 class="my-4">Adicionar Livro (Com Select)</h1>
 
-    <form action="{{ route('books.store.select') }}" method="POST">
+    <form action="{{ route('books.store.select') }}" method="POST" enctype="multipart/form-data">
         @csrf
         <div class="mb-3">
             <label for="title" class="form-label">Título</label>
@@ -75,6 +75,12 @@
                 {{ $message }}
             </div>
             @enderror
+        </div>
+
+        <div class="mb-3">
+            <label for="cover" class="form-label">Capa do Livro (opcional)</label>
+            <input type="file" name="cover" id="cover"
+                class="form-control" accept="image/*">
         </div>
 
 

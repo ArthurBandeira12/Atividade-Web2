@@ -7,112 +7,121 @@ use App\Models\Author;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Facades\Storage;
 
 class BookController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $books = Book::with('author')->paginate(20);
-
         return view('books.index', compact('books'));
     }
-
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        $publishers = Publisher::all();
+        $authors = Author::all();
+        $categories = Category::all();
+
+        return view('books.create', compact('publishers', 'authors', 'categories'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Book $book)
-{
-    // Carregando autor, editora e categoria do livro com eager loading
-    $book->load(['author', 'publisher', 'category']);
-    $users = User::all();
-
-    return view('books.show', compact('book', 'users'));
-
-}
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Book $book)
-    {
-        $publishers = Publisher::all();
-    $authors = Author::all();
-    $categories = Category::all();
-
-    return view('books.edit', compact('book', 'publishers', 'authors', 'categories'));
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-   public function update(Request $request, Book $book)
-{
-    $request->validate([
-        'title' => 'required|string|max:255',
-        'publisher_id' => 'required|exists:publishers,id',
-        'author_id' => 'required|exists:authors,id',
-        'category_id' => 'required|exists:categories,id',
-        'pages' => 'required|integer|min:1',
-
-    ]);
-
-    $book->update($request->all());
-
-    return redirect()->route('books.index')->with('success', 'Livro atualizado com sucesso.');
-}
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
-
-
-
-       public function createWithId()
-    {
-        return view('books.create-id');
-    }
-
-    // Salvar livro com input de ID
-    public function storeWithId(Request $request)
-    {
-        $request->validate([
+        $data = $request->validate([
             'title' => 'required|string|max:255',
             'publisher_id' => 'required|exists:publishers,id',
             'author_id' => 'required|exists:authors,id',
             'category_id' => 'required|exists:categories,id',
             'pages' => 'required|integer|min:1',
-
+            'cover' => 'nullable|image|mimes:png,jpg,jpeg',
         ]);
 
-        Book::create($request->all());
+        if ($request->hasFile('cover')) {
+            $data['cover'] = $request->file('cover')->store('covers', 'public');
+        }
+
+        Book::create($data);
 
         return redirect()->route('books.index')->with('success', 'Livro criado com sucesso.');
     }
 
-    // Formulário com input select
+    public function show(Book $book)
+    {
+        $book->load(['author', 'publisher', 'category']);
+        $users = User::all();
+
+        return view('books.show', compact('book', 'users'));
+    }
+    public function edit(Book $book)
+    {
+        $publishers = Publisher::all();
+        $authors = Author::all();
+        $categories = Category::all();
+
+        return view('books.edit', compact('book', 'publishers', 'authors', 'categories'));
+    }
+
+    public function update(Request $request, Book $book)
+    {
+        $data = $request->validate([
+            'title' => 'required|string|max:255',
+            'publisher_id' => 'required|exists:publishers,id',
+            'author_id' => 'required|exists:authors,id',
+            'category_id' => 'required|exists:categories,id',
+            'pages' => 'required|integer|min:1',
+            'cover' => 'nullable|image|mimes:png,jpg,jpeg',
+        ]);
+
+        if ($request->hasFile('cover')) {
+
+            if ($book->cover) {
+                Storage::disk('public')->delete($book->cover);
+            }
+
+            $data['cover'] = $request->file('cover')->store('covers', 'public');
+        }
+
+        $book->update($data);
+
+        return redirect()->route('books.index')->with('success', 'Livro atualizado com sucesso.');
+    }
+
+    public function destroy(Book $book)
+    {
+        if ($book->cover) {
+            Storage::disk('public')->delete($book->cover);
+        }
+
+        $book->delete();
+
+        return redirect()->route('books.index')->with('success', 'Livro deletado com sucesso.');
+    }
+
+    public function createWithId()
+    {
+        return view('books.create-id');
+    }
+
+    public function storeWithId(Request $request)
+    {
+        $data = $request->validate([
+            'title' => 'required|string|max:255',
+            'publisher_id' => 'required|exists:publishers,id',
+            'author_id' => 'required|exists:authors,id',
+            'category_id' => 'required|exists:categories,id',
+            'pages' => 'required|integer|min:1',
+            'cover' => 'nullable|image|mimes:png,jpg,jpeg',
+        ]);
+
+        if ($request->hasFile('cover')) {
+            $data['cover'] = $request->file('cover')->store('covers', 'public');
+        }
+
+        Book::create($data);
+
+        return redirect()->route('books.index')->with('success', 'Livro criado com sucesso.');
+    }
+
     public function createWithSelect()
     {
         $publishers = Publisher::all();
@@ -122,19 +131,22 @@ class BookController extends Controller
         return view('books.create-select', compact('publishers', 'authors', 'categories'));
     }
 
-    // Salvar livro com input select
     public function storeWithSelect(Request $request)
     {
-        $request->validate([
+        $data = $request->validate([
             'title' => 'required|string|max:255',
             'publisher_id' => 'required|exists:publishers,id',
             'author_id' => 'required|exists:authors,id',
             'category_id' => 'required|exists:categories,id',
             'pages' => 'required|integer|min:1',
-
+            'cover' => 'nullable|image|mimes:png,jpg,jpeg',
         ]);
 
-        Book::create($request->all());
+        if ($request->hasFile('cover')) {
+            $data['cover'] = $request->file('cover')->store('covers', 'public');
+        }
+
+        Book::create($data);
 
         return redirect()->route('books.index')->with('success', 'Livro criado com sucesso.');
     }
