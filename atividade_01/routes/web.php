@@ -12,6 +12,7 @@ Route::get('/', function () {
 });
 
 Auth::routes();
+Route::patch('/users/{id}/role', [UserController::class, 'updateRole'])->name('users.updateRole');
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::resource('users', UserController::class);

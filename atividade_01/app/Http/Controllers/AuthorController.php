@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Facades\Gate;
 use App\Models\Author;
 use Illuminate\Http\Request;
 
@@ -21,6 +21,7 @@ class AuthorController extends Controller
      */
     public function create()
     {
+        Gate::authorize('manage-library');
         return view('author.create');
     }
 
@@ -53,6 +54,7 @@ class AuthorController extends Controller
      */
     public function edit(Author $author)
     {
+        Gate::authorize('manage-library');
         return view('author.edit', compact('author'));
     }
 
@@ -61,6 +63,7 @@ class AuthorController extends Controller
      */
     public function update(Request $request, Author $author)
     {
+        Gate::authorize('manage-library');
         $request->validate([
             'name' => 'required|string|max:255',
             'birth_date' => 'required|date',
@@ -77,6 +80,7 @@ class AuthorController extends Controller
      */
     public function destroy(Author $author)
     {
+        Gate::authorize('manage-library');
         $author->delete();
         return redirect()->route('author.index')->with('success', 'Autor excluído com sucesso.');
     }

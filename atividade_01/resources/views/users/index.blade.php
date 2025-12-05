@@ -23,6 +23,7 @@
                     <a href="{{ route('users.show', $user) }}" class="btn btn-info btn-sm">
                         <i class="bi bi-eye"></i> Visualizar
                     </a>
+                    @can('manage-library')
                     <a href="{{ route('users.edit', $user) }}" class="btn btn-primary btn-sm">
                         <i class="bi bi-pencil"></i> Editar
                     </a>
@@ -33,12 +34,16 @@
                         <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Tem certeza que deseja excluir este usuário?')">
                             <i class="bi bi-trash"></i> Excluir
                         </button>
+                        @endcan
                     </form>
                 </td>
             </tr>
             @endforeach
         </tbody>
     </table>
+    {{ auth()->user()->role }}
+
+
 
     <div class="d-flex justify-content-center">
         {{ $users->links() }}

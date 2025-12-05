@@ -3,10 +3,11 @@
 @section('content')
 <div class="container">
     <h1 class="my-4">Lista de Categorias</h1>
-
+    @can('manage-library')
     <a href="{{ route('categories.create') }}" class="btn btn-success mb-3">
         <i class="bi bi-plus"></i> Adicionar Categoria
     </a>
+    @endcan
 
     @if(session('success'))
         <div class="alert alert-success">
@@ -28,17 +29,18 @@
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ $category->name }}</td>
                     <td>
-                        <!-- Botão de Visualizar -->
+                        
                         <a href="{{ route('categories.show', $category) }}" class="btn btn-info btn-sm">
                             <i class="bi bi-eye"></i> Visualizar
                         </a>
-
-                        <!-- Botão de Editar -->
+                        
+                        @can('manage-library')
                         <a href="{{ route('categories.edit', $category) }}" class="btn btn-primary btn-sm">
                             <i class="bi bi-pencil"></i> Editar
                         </a>
+                        @endcan
 
-                        <!-- Botão de Excluir -->
+                        @can('manage-library')
                         <form action="{{ route('categories.destroy', $category) }}" method="POST" style="display: inline;">
                             @csrf
                             @method('DELETE')
@@ -46,6 +48,7 @@
                                 <i class="bi bi-trash"></i> Excluir
                             </button>
                         </form>
+                        @endcan
                     </td>
                 </tr>
             @empty

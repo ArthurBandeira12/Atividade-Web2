@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Gate;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -14,7 +15,6 @@ class UserController extends Controller
     {
         $users = \App\Models\User::paginate(10);
         return view('users.index', compact('users'));
-
     }
 
     /**
@@ -52,14 +52,33 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, \App\Models\User $user)
+    public function update(Request $request, User $user)
     {
-        $user->update($request->only('name', 'email'));
+        if (!Gate::allows('manage-users')) {
+            abort(403);
+        }
 
-        return redirect()->route('users.index')->with('success', 'Usuário atualizado com sucesso.');
+        $user->update($request->only('name', 'email', 'role'));
+
+        return redirect()->route('users.index')->with('success', 'Usuário atualizado!');
     }
 
-    
+    public function updateRole(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+
+        $request->validate([
+            'role' => 'required|in:admin,bibliotecario,cliente'
+        ]);
+
+        $user->role = $request->role;
+        $user->save();
+
+        return redirect()->back()->with('success', 'Função atualizada com sucesso!');
+    }
+
+
+
 
     /**
      * Remove the specified resource from storage.

@@ -8,6 +8,8 @@ use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Gate;
+
 
 class BookController extends Controller
 {
@@ -18,6 +20,7 @@ class BookController extends Controller
     }
     public function create()
     {
+        Gate::authorize('manage-library');
         $publishers = Publisher::all();
         $authors = Author::all();
         $categories = Category::all();
@@ -27,6 +30,7 @@ class BookController extends Controller
 
     public function store(Request $request)
     {
+        Gate::authorize('manage-library');
         $data = $request->validate([
             'title' => 'required|string|max:255',
             'publisher_id' => 'required|exists:publishers,id',
@@ -54,6 +58,7 @@ class BookController extends Controller
     }
     public function edit(Book $book)
     {
+        Gate::authorize('manage-library');
         $publishers = Publisher::all();
         $authors = Author::all();
         $categories = Category::all();
@@ -63,6 +68,7 @@ class BookController extends Controller
 
     public function update(Request $request, Book $book)
     {
+        Gate::authorize('manage-library');
         $data = $request->validate([
             'title' => 'required|string|max:255',
             'publisher_id' => 'required|exists:publishers,id',
@@ -88,6 +94,7 @@ class BookController extends Controller
 
     public function destroy(Book $book)
     {
+        Gate::authorize('isAdmin');
         if ($book->cover) {
             Storage::disk('public')->delete($book->cover);
         }

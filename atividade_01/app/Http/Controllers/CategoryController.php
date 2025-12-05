@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Storage;
 class CategoryController extends Controller
 {
     // Exibe uma lista de categorias
@@ -17,12 +18,15 @@ class CategoryController extends Controller
     // Mostra o formulário para criar uma nova categoria
     public function create()
     {
+        Gate::authorize('manage-library');
+
         return view('categories.create');
     }
 
     // Armazena uma nova categoria no banco de dados
     public function store(Request $request)
     {
+        Gate::authorize('manage-library');
         $request->validate([
             'name' => 'required|string|unique:categories|max:255',
         ]);
@@ -41,12 +45,14 @@ class CategoryController extends Controller
     // Mostra o formulário para editar uma categoria existente
     public function edit(Category $category)
     {
+        Gate::authorize('manage-library');
         return view('categories.edit', compact('category'));
     }
 
     // Atualiza uma categoria no banco de dados
     public function update(Request $request, Category $category)
     {
+        Gate::authorize('manage-library');
         $request->validate([
             'name' => 'required|string|unique:categories,name,' . $category->id . '|max:255',
         ]);
@@ -59,6 +65,7 @@ class CategoryController extends Controller
     // Remove uma categoria do banco de dados
     public function destroy(Category $category)
     {
+        Gate::authorize('manage-library');
         $category->delete();
 
         return redirect()->route('categories.index')->with('success', 'Categoria excluída com sucesso.');

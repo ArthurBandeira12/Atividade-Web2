@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 use App\Models\Publisher;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Gate;
 class PublisherController extends Controller
 {
     /**
@@ -20,6 +20,7 @@ class PublisherController extends Controller
      */
     public function create()
     {
+        Gate::authorize('manage-library');
         return view('publisher.create');
     }
 
@@ -51,6 +52,7 @@ class PublisherController extends Controller
      */
     public function edit(Publisher $publisher)
     {
+        Gate::authorize('manage-library');
         return view('publisher.edit', compact('publisher'));
     }
 
@@ -59,6 +61,7 @@ class PublisherController extends Controller
      */
     public function update(Request $request, Publisher $publisher)
     {
+        Gate::authorize('manage-library');
         $request->validate([
             'name' => 'required|string|max:255',
             'address' => 'required|string|max:255',
@@ -74,6 +77,7 @@ class PublisherController extends Controller
      */
     public function destroy(Publisher $publisher)
     {
+        Gate::authorize('manage-library');
         $publisher->delete();
         return redirect()->route('publisher.index')->with('success', 'Editora excluída com sucesso.');
     }
