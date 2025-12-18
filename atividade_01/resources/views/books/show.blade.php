@@ -3,6 +3,11 @@
 @section('content')
 <div class="container">
     <h1 class="my-4">Detalhes do Livro</h1>
+    @if(session('error'))
+    <div class="alert alert-danger">
+        {{ session('error') }}
+    </div>
+    @endif
 
     @if($book->cover)
     <div class="mb-3 text-center">

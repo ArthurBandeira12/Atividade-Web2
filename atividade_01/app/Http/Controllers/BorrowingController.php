@@ -45,6 +45,18 @@ class BorrowingController extends Controller
             ->with('error', 'Este livro ja esta emprestado e ainda nao foi devolvido');
         }
 
+        $openUserBorrows = Borrowing::where('user_id', $request->user_id)
+         ->whereNull('returned_at')
+         ->cont();
+
+        
+        if($openUserBorrows >= 5){
+            return redirect()
+            ->route('books.show', $book)
+            ->with('error', 'Este usuario ja possui 5 emprestimos em aberto');
+
+        }
+
         Borrowing::create([
             'user_id' => $request->user_id,
             'book_id' => $book->id,
