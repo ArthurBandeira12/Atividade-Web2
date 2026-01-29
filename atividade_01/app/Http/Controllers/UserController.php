@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -89,4 +89,36 @@ class UserController extends Controller
 
         return redirect()->route('users.index')->with('success', 'Usuário excluído com sucesso.');
     }
+
+        /**
+     * Lista usuários com débito (bibliotecário)
+     */
+    public function usersWithDebit()
+    {
+
+        if (!in_array(Auth::user()->role, ['admin', 'bibliotecario'])) {
+        abort(403);
+    }
+        $users = User::where('debit', '>', 0)->get();
+
+        return view('users.debit', compact('users'));
+    }
+
+    /**
+     * Zera o débito do usuário (pagamento da multa)
+     */
+    public function clearDebit(User $user)
+    {
+
+         if (!in_array(Auth::user()->role, ['admin', 'bibliotecario'])) {
+        abort(403);
+    }
+        $user->debit = 0;
+        $user->save();
+
+        return redirect()
+            ->route('users.debit')
+            ->with('success', 'Débito quitado com sucesso.');
+    }
+
 }
